@@ -3,6 +3,8 @@ import { processPullRequest } from "./github-process";
 
 const app = express();
 
+app.use(express.json());
+
 app.get("/", (req, res) => {
   console.log("🌞 Someone is testing");
   res.send("🌞 KarpoReviewServer is alive!");
