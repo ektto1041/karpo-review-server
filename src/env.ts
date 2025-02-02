@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const env = {
-  GITHUB_TOKEN: process.env.GH_TOKEN,
+  GH_TOKEN: process.env.GH_TOKEN,
   REPO_OWNER: process.env.REPO_OWNER,
   REPO_NAME: process.env.REPO_NAME,
 };
