@@ -1,0 +1,23 @@
+{
+  "name": "karpo-reviewer",
+  "version": "0.0.0",
+  "main": "src/index.ts",
+  "type": "commonjs",
+  "keywords": [],
+  "author": "ektto1041 <dhkdwk1041@gmail.com>",
+  "license": "ISC",
+  "description": "Github weebhook server for Code Review",
+  "scripts": {
+    "start": "tsc && node ./build/index.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.0",
+    "typescript": "^5.7.3"
+  }
+}
