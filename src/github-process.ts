@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import env from "./env";
+import { generateReviewTopics } from "./strategies";
 
 export async function processPullRequest(prNumber: string) {
   console.log(`🚀 Fetching changed files for PR #${prNumber}...`);
@@ -15,13 +16,21 @@ export async function processPullRequest(prNumber: string) {
     });
 
     const files = response.data;
-    let commentBody = "🤖 PR에서 변경된 파일들의 첫 문장:\n\n";
+    let patchContents = "";
 
     for (const file of files) {
       if (file.patch) {
-        commentBody += file.patch;
+        patchContents += `File: ${file.filename}\n${file.patch}\n\n`;
       }
     }
+
+    if (!patchContents) {
+      console.log("😅 변경된 코드 없음.");
+      return;
+    }
+
+    const reviewTopics = await generateReviewTopics(patchContents);
+    const commentBody = `### AI 코드 리뷰 주제 추천\n\n${reviewTopics}`;
 
     await postComment(prNumber, commentBody);
   } catch (e) {
