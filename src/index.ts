@@ -32,7 +32,12 @@ app.post("/webhook", (req, res) => {
     return;
   }
 
-  if (!(baseBranch.includes("dev") && headBranch.includes("feature"))) {
+  if (
+    !(
+      baseBranch.includes("dev") &&
+      (headBranch.includes("feature") || headBranch.includes("hotfix"))
+    )
+  ) {
     res.status(200).send("Webhook received, Invalid branch");
     return;
   }
