@@ -6,7 +6,8 @@ const app = express();
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  console.log("🌞 Someone is testing");
+  req.host;
+  console.log("# Someone is testing");
   res.send("🌞 KarpoReviewServer is alive!");
 });
 
@@ -19,15 +20,25 @@ app.post("/webhook", (req, res) => {
 
   const { action, pull_request } = req.body;
   const prNumber: string = pull_request.number;
+  const headBranch: string = pull_request.head.ref;
+  const baseBranch: string = pull_request.base.ref;
 
-  console.log(`🔹 PR #${prNumber} - Action: ${action}`);
+  console.log(`# PR #${prNumber} - Action: ${action}`);
+  console.log(`# PR #${prNumber} - From: ${headBranch} / To: ${baseBranch}`);
 
   // PR이 생성, 업데이트, 다시 열린 경우에만 처리
-  if (["opened", "synchronize", "reopened"].includes(action)) {
-    processPullRequest(prNumber);
+  if (!["opened", "synchronize", "reopened"].includes(action)) {
+    res.status(200).send("Webhook received, Not allowed action.");
+    return;
   }
 
-  res.status(200).send("Webhook received.");
+  if (!(baseBranch.includes("dev") && headBranch.includes("feature"))) {
+    res.status(200).send("Webhook received, Invalid branch");
+    return;
+  }
+
+  processPullRequest(prNumber);
+  res.status(200).send("Webhook received, Success.");
 });
 
 app.listen(80, () => {
