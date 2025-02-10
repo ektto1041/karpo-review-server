@@ -2,11 +2,13 @@ import axios, { AxiosError } from "axios";
 import env from "./env";
 import { generateReviewTopics } from "./strategies";
 
-export async function processPullRequest(prNumber: string) {
-  console.log(`🚀 Fetching changed files for PR #${prNumber}...`);
+export async function processPullRequest(repoName: string, prNumber: string) {
+  console.log(
+    `🚀 Fetching changed files for PR #${prNumber} in Repo ${repoName}...`
+  );
 
   try {
-    const url = `https://api.github.com/repos/${env.REPO_OWNER}/${env.REPO_NAME}/pulls/${prNumber}/files`;
+    const url = `https://api.github.com/repos/${env.REPO_OWNER}/${repoName}/pulls/${prNumber}/files`;
     const response = await axios.get(url, {
       headers: {
         Authorization: `Bearer ${env.GH_TOKEN}`,
@@ -32,7 +34,7 @@ export async function processPullRequest(prNumber: string) {
     const reviewTopics = await generateReviewTopics(patchContents);
     const commentBody = `### AI 코드 리뷰 주제 추천\n\n${reviewTopics}`;
 
-    await postComment(prNumber, commentBody);
+    await postComment(repoName, prNumber, commentBody);
   } catch (e) {
     const error = e as AxiosError;
 
@@ -44,9 +46,13 @@ export async function processPullRequest(prNumber: string) {
 }
 
 // PR에 댓글 작성 함수
-async function postComment(prNumber: string, message: string) {
+async function postComment(
+  repoName: string,
+  prNumber: string,
+  message: string
+) {
   try {
-    const url = `https://api.github.com/repos/${env.REPO_OWNER}/${env.REPO_NAME}/issues/${prNumber}/comments`;
+    const url = `https://api.github.com/repos/${env.REPO_OWNER}/${repoName}/issues/${prNumber}/comments`;
     await axios.post(
       url,
       { body: message },

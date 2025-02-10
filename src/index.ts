@@ -1,5 +1,6 @@
 import express from "express";
 import { processPullRequest } from "./github-process";
+import env from "./env";
 
 const app = express();
 
@@ -22,6 +23,14 @@ app.post("/webhook", (req, res) => {
   const prNumber: string = pull_request.number;
   const headBranch: string = pull_request.head.ref;
   const baseBranch: string = pull_request.base.ref;
+  const repoName: string = pull_request.head.repo.name;
+
+  console.log(`# REPO: ${repoName}`);
+
+  if (![env.REPO_NAME_FE, env.REPO_NAME_BE].includes(repoName)) {
+    res.status(200).send("Webhook received, Not allowed repositories.");
+    return;
+  }
 
   console.log(`# PR #${prNumber} - Action: ${action}`);
   console.log(`# PR #${prNumber} - From: ${headBranch} / To: ${baseBranch}`);
@@ -42,7 +51,7 @@ app.post("/webhook", (req, res) => {
     return;
   }
 
-  processPullRequest(prNumber);
+  processPullRequest(repoName, prNumber);
   res.status(200).send("Webhook received, Success.");
 });
 
