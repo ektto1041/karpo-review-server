@@ -25,7 +25,8 @@ jobs:
         run: |
           echo "GH_TOKEN=${{ secrets.GH_TOKEN }}" >> .env
           echo "REPO_OWNER=${{ secrets.REPO_OWNER }}" >> .env
-          echo "REPO_NAME=${{ secrets.REPO_NAME }}" >> .env
+          echo "REPO_NAME_FE=${{ secrets.REPO_NAME_FE }}" >> .env
+          echo "REPO_NAME_BE=${{ secrets.REPO_NAME_BE }}" >> .env
 
       - name: Build Express Server
         run: npm run build
